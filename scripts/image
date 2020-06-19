@@ -72,16 +72,7 @@ fi
 # Get origin url, fix git:// and git@github.com: urls if necessary
 ORIGIN_URL="$(git remote -v | awk '$1 == "origin" { print $2 }' | head -1 | sed 's#\.git$##;s#^git:#https:#;s#^git@github\.com:#https://github.com/#')"
 
-[ "${BUILDER_NAME,,}" = "official" ] && BUILDER_NAME=
-if [ "${OFFICIAL}" = "yes" ]; then
-  LIBREELEC_BUILD="official"
-else
-  if [ -n "${BUILDER_NAME}" ]; then
-    LIBREELEC_BUILD="${BUILDER_NAME}"
-  else
-    LIBREELEC_BUILD="community"
-  fi
-fi
+LIBREELEC_BUILD="official"
 
 if [ -n "${CUSTOM_VERSION}" ]; then
   LIBREELEC_VERSION="${CUSTOM_VERSION}"
@@ -179,7 +170,7 @@ ${GREETING1}
 ${GREETING2}
 ${GREETING3}
 ${GREETING4}
-${DISTRONAME} (${LIBREELEC_BUILD}): ${LIBREELEC_VERSION} (${LIBREELEC_ARCH})
+${DISTRONAME} (${LIBREELEC_BUILD}): ${LIBREELEC_VERSION} (JimmyS build) (${LIBREELEC_ARCH})
 EOF
 
 ln -sf /etc/issue ${INSTALL}/etc/motd
