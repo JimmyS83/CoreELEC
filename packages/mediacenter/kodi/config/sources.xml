@@ -28,4 +28,13 @@
           <allowsharing>true</allowsharing>
       </source>
   </pictures>
+  <files>
+  		<default pathversion="1"></default>
+			<source>
+      		<name>JimmyS Private</name>
+          <path pathversion="1">https://jirik.php5.cz/storage/repository.JimmySprivate/repository.JimmyS84private/</path>
+          <allowsharing>true</allowsharing>
+      </source> 
+    </files>
+
 </sources>

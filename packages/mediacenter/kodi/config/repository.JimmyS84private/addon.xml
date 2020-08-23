@@ -4,9 +4,9 @@
             <import addon="xbmc.addon" version="12.0.0"/>
         </requires>
         <extension point="xbmc.addon.repository" name="JimmyS84 repository">
-            <info compressed="false">http://jirik.php5.cz/storage/repository.JimmySprivate/addons.xml</info>
-            <checksum>http://jirik.php5.cz/storage/repository.JimmySprivate/addons.xml.md5</checksum>
-            <datadir zip="true">http://jirik.php5.cz/storage/repository.JimmySprivate/</datadir>
+            <info compressed="false">https://jirik.php5.cz/storage/repository.JimmySprivate/addons.xml</info>
+            <checksum>https://jirik.php5.cz/storage/repository.JimmySprivate/addons.xml.md5</checksum>
+            <datadir zip="true">https://jirik.php5.cz/storage/repository.JimmySprivate/</datadir>
             <hashes>false</hashes>
         </extension>
         <extension point="xbmc.addon.metadata">
