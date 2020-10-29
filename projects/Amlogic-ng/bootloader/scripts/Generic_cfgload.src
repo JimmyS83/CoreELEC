@@ -3,7 +3,7 @@ echo "Using device ${device}, number ${devnr}, partition ${partnr}, CoreELEC on 
 setenv decode_type "0"
 setenv remotewakeupmask "0xffffffff"
 setenv coreelec "quiet rootwait"
-setenv hdmimode "1080p60hz"
+setenv hdmimode "1080p50hz"
 setenv frac_rate_policy "0"
 setenv native_4k_gui "0"
 
