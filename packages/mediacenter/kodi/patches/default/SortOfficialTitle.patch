@@ -1,0 +1,209 @@
+--- a/xbmc/filesystem/PluginDirectory.cpp	Tue Mar 16 13:28:28 2021
++++ b/xbmc/filesystem/PluginDirectory.cpp	Mon Mar 15 23:15:16 2021
+@@ -348,6 +348,12 @@
+         dir->m_listItems->AddSortMethod(SortBySortTitle, 556, LABEL_MASKS("%T", "%M", "%T", "%M"), CServiceBroker::GetSettingsComponent()->GetSettings()->GetBool(CSettings::SETTING_FILELISTS_IGNORETHEWHENSORTING) ? SortAttributeIgnoreArticle : SortAttributeNone);
+         break;
+       }
++      case SORT_METHOD_VIDEO_ORIGINAL_TITLE:
++      case SORT_METHOD_VIDEO_ORIGINAL_TITLE_IGNORE_THE:
++      {
++        dir->m_listItems->AddSortMethod(SortByOriginalTitle, 20376, LABEL_MASKS("%T", "%M", "%T", "%M"), CServiceBroker::GetSettingsComponent()->GetSettings()->GetBool(CSettings::SETTING_FILELISTS_IGNORETHEWHENSORTING) ? SortAttributeIgnoreArticle : SortAttributeNone);
++        break;
++      }
+     case SORT_METHOD_MPAA_RATING:
+       {
+         dir->m_listItems->AddSortMethod(SortByMPAA, 20074, LABEL_MASKS("%T", "%O", "%T", "%O"));
+--- a/xbmc/interfaces/legacy/ModuleXbmcplugin.h	Tue Mar 16 13:28:28 2021
++++ b/xbmc/interfaces/legacy/ModuleXbmcplugin.h	Mon Mar 15 22:17:22 2021
+@@ -461,6 +461,8 @@
+     SWIG_CONSTANT(int, SORT_METHOD_VIDEO_TITLE);
+     SWIG_CONSTANT(int, SORT_METHOD_VIDEO_SORT_TITLE);
+     SWIG_CONSTANT(int, SORT_METHOD_VIDEO_SORT_TITLE_IGNORE_THE);
++    SWIG_CONSTANT(int, SORT_METHOD_VIDEO_ORIGINAL_TITLE);
++    SWIG_CONSTANT(int, SORT_METHOD_VIDEO_ORIGINAL_TITLE_IGNORE_THE);
+     SWIG_CONSTANT(int, SORT_METHOD_PRODUCTIONCODE);
+     SWIG_CONSTANT(int, SORT_METHOD_SONG_RATING);
+     SWIG_CONSTANT(int, SORT_METHOD_MPAA_RATING);
+--- a/xbmc/playlists/SmartPlayList.cpp	Tue Mar 16 13:28:28 2021
++++ b/xbmc/playlists/SmartPlayList.cpp	Tue Mar 16 11:01:06 2021
+@@ -525,6 +525,7 @@
+   else if (type == "tvshows")
+   {
+     orders.push_back(SortBySortTitle);
++    orders.push_back(SortByOriginalTitle);
+     orders.push_back(SortByTvShowStatus);
+     orders.push_back(SortByVotes);
+     orders.push_back(SortByRating);
+@@ -543,6 +544,7 @@
+   else if (type == "episodes")
+   {
+     orders.push_back(SortByTitle);
++    orders.push_back(SortByOriginalTitle);
+     orders.push_back(SortByTvShowTitle);
+     orders.push_back(SortByVotes);
+     orders.push_back(SortByRating);
+@@ -562,6 +564,7 @@
+   else if (type == "movies")
+   {
+     orders.push_back(SortBySortTitle);
++    orders.push_back(SortByOriginalTitle);
+     orders.push_back(SortByVotes);
+     orders.push_back(SortByRating);
+     orders.push_back(SortByUserRating);
+--- a/xbmc/utils/SortUtils.cpp	Tue Mar 16 13:28:28 2021
++++ b/xbmc/utils/SortUtils.cpp	Tue Mar 16 12:36:28 2021
+@@ -244,6 +244,22 @@
+   return title;
+ }
+ 
++std::string ByOriginalTitle(SortAttribute attributes, const SortItem& values)
++{
++
++  std::string title = values.at(FieldOriginalTitle).asString();
++  if (title.empty())
++    title = values.at(FieldSortTitle).asString();
++
++  if (title.empty())
++    title = values.at(FieldTitle).asString();
++
++  if (attributes & SortAttributeIgnoreArticle)
++    title = SortUtils::RemoveArticles(title);
++
++  return title;
++}
++
+ std::string ByRating(SortAttribute attributes, const SortItem &values)
+ {
+   return StringUtils::Format("%f %s", values.at(FieldRating).asFloat(), ByLabel(attributes, values).c_str());
+@@ -605,6 +621,7 @@
+   preparators[SortByInstallDate]              = ByInstallDate;
+   preparators[SortByLastUpdated]              = ByLastUpdated;
+   preparators[SortByLastUsed]                 = ByLastUsed;
++  preparators[SortByOriginalTitle]            = ByOriginalTitle;
+ 
+   return preparators;
+ }
+@@ -690,6 +707,9 @@
+   sortingFields[SortByInstallDate].insert(FieldInstallDate);
+   sortingFields[SortByLastUpdated].insert(FieldLastUpdated);
+   sortingFields[SortByLastUsed].insert(FieldLastUsed);
++  sortingFields[SortByOriginalTitle].insert(FieldOriginalTitle);
++  sortingFields[SortByOriginalTitle].insert(FieldTitle);
++  sortingFields[SortByOriginalTitle].insert(FieldSortTitle);
+   sortingFields.insert(std::pair<SortBy, Fields>(SortByRandom, Fields()));
+ 
+   return sortingFields;
+@@ -891,6 +911,8 @@
+   { SortByUserRating,               SORT_METHOD_VIDEO_USER_RATING,            SortAttributeIgnoreFolders, 38018 },
+   { SortBySortTitle,                SORT_METHOD_VIDEO_SORT_TITLE,             SortAttributeIgnoreFolders, 171 },
+   { SortBySortTitle,                SORT_METHOD_VIDEO_SORT_TITLE_IGNORE_THE,  (SortAttribute)(SortAttributeIgnoreFolders | SortAttributeIgnoreArticle), 171 },
++  { SortByOriginalTitle,            SORT_METHOD_VIDEO_ORIGINAL_TITLE,         SortAttributeIgnoreFolders, 20376 },
++  { SortByOriginalTitle,            SORT_METHOD_VIDEO_ORIGINAL_TITLE_IGNORE_THE,  (SortAttribute)(SortAttributeIgnoreFolders | SortAttributeIgnoreArticle), 20376 },
+   { SortByYear,                     SORT_METHOD_YEAR,                         SortAttributeIgnoreFolders, 562 },
+   { SortByProductionCode,           SORT_METHOD_PRODUCTIONCODE,               SortAttributeNone,          20368 },
+   { SortByProgramCount,             SORT_METHOD_PROGRAM_COUNT,                SortAttributeNone,          567 }, // label is "play count"
+@@ -1053,6 +1075,7 @@
+   { "installdate",      SortByInstallDate },
+   { "lastupdated",      SortByLastUpdated },
+   { "lastused",         SortByLastUsed },
++  { "originaltitle",    SortByOriginalTitle },
+ };
+ 
+ SortBy SortUtils::SortMethodFromString(const std::string& sortMethod)
+--- a/xbmc/utils/SortUtils.h	Tue Mar 16 13:28:28 2021
++++ b/xbmc/utils/SortUtils.h	Mon Mar 15 22:07:42 2021
+@@ -153,6 +153,8 @@
+   SortByLastUpdated,
+   /// __52__ : Sort by last used                  <em>(String: <b><c>lastused</c></b>)</em>
+   SortByLastUsed,
++  /// __53__ : Sort by original title             <em>(String: <b><c>OriginalTitle</c></b>)</em>
++  SortByOriginalTitle,
+ } SortBy;
+ ///@}
+ 
+--- a/xbmc/video/GUIViewStateVideo.cpp	Tue Mar 16 13:28:28 2021
++++ b/xbmc/video/GUIViewStateVideo.cpp	Tue Mar 16 12:35:57 2021
+@@ -126,6 +126,7 @@
+     case NODE_TYPE_INPROGRESS_TVSHOWS:
+       {
+         AddSortMethod(SortBySortTitle, sortAttributes, 556, LABEL_MASKS("%T", "%M", "%T", "%M"));  // Title, #Episodes | Title, #Episodes
++        AddSortMethod(SortByOriginalTitle, sortAttributes, 20376, LABEL_MASKS("%T", "%M", "%T", "%M"));  // Title, #Episodes | Title, #Episodes
+ 
+         AddSortMethod(SortByNumberOfEpisodes, 20360, LABEL_MASKS("%L", "%M", "%L", "%M"));  // Label, #Episodes | Label, #Episodes
+         AddSortMethod(SortByLastPlayed, 568, LABEL_MASKS("%T", "%p", "%T", "%p"));  // Title, #Last played | Title, #Last played
+@@ -230,11 +231,13 @@
+         {
+           AddSortMethod(SortByYear, 562, LABEL_MASKS("%T", "%Y"));  // Title, Year | empty, empty
+           AddSortMethod(SortBySortTitle, sortAttributes, 556, LABEL_MASKS("%T", "%R"));  // Title, Rating | empty, empty
++          AddSortMethod(SortByOriginalTitle, sortAttributes, 20376, LABEL_MASKS("%T", "%R"));  // Title, Rating | empty, empty
+         }
+         else
+         {
+           AddSortMethod(SortBySortTitle, sortAttributes, 556, LABEL_MASKS("%T", "%R", "%T", "%R"));  // Title, Rating | Title, Rating
+-          AddSortMethod(SortByYear, 562, LABEL_MASKS("%T", "%Y", "%T", "%Y"));  // Title, Year | Title, Year
++          AddSortMethod(SortByOriginalTitle, sortAttributes, 20376, LABEL_MASKS("%T", "%R", "%T", "%R"));  // Title, Rating | Title, Rating
++          AddSortMethod(SortByYear, 562, LABEL_MASKS("%T", "%Y", "%T", "%Y")); // Title, Year | Title, Year
+         }
+         AddSortMethod(SortByRating, 563, LABEL_MASKS("%T", "%R", "%T", "%R"));  // Title, Rating | Title, Rating
+         AddSortMethod(SortByUserRating, 38018, LABEL_MASKS("%T", "%r", "%T", "%r"));  // Title, Userrating | Title, Userrating
+@@ -439,6 +442,8 @@
+ CGUIViewStateVideoMovies::CGUIViewStateVideoMovies(const CFileItemList& items) : CGUIViewStateWindowVideo(items)
+ {
+   AddSortMethod(SortBySortTitle, 556, LABEL_MASKS("%T", "%R", "%T", "%R"),  // Title, Rating | Title, Rating
++    CServiceBroker::GetSettingsComponent()->GetSettings()->GetBool(CSettings::SETTING_FILELISTS_IGNORETHEWHENSORTING) ? SortAttributeIgnoreArticle : SortAttributeNone);
++  AddSortMethod(SortByOriginalTitle, 20376, LABEL_MASKS("%T", "%R", "%T", "%R"),  // Title, Rating | Title, Rating
+     CServiceBroker::GetSettingsComponent()->GetSettings()->GetBool(CSettings::SETTING_FILELISTS_IGNORETHEWHENSORTING) ? SortAttributeIgnoreArticle : SortAttributeNone);
+   AddSortMethod(SortByYear, 562, LABEL_MASKS("%T", "%Y", "%T", "%Y"));  // Title, Year | Title, Year
+   AddSortMethod(SortByRating, 563, LABEL_MASKS("%T", "%R", "%T", "%R"));  // Title, Rating | Title, Rating
+--- a/xbmc/video/VideoDatabase.cpp	Tue Mar 16 13:28:28 2021
++++ b/xbmc/video/VideoDatabase.cpp	Tue Mar 16 12:33:36 2021
+@@ -6961,7 +6961,8 @@
+       sortDescription.sortBy == SortByUserRating ||
+       sortDescription.sortBy == SortByYear ||
+       sortDescription.sortBy == SortByLastPlayed ||
+-      sortDescription.sortBy == SortByPlaycount)
++      sortDescription.sortBy == SortByPlaycount ||
++      sortDescription.sortBy == SortByOriginalTitle)
+     sorting.sortAttributes = (SortAttribute)(sortDescription.sortAttributes | SortAttributeIgnoreFolders);
+ 
+   bool success = false;
+--- a/xbmc/video/VideoInfoTag.cpp	Tue Mar 16 13:28:28 2021
++++ b/xbmc/video/VideoInfoTag.cpp	Tue Mar 16 12:06:25 2021
+@@ -670,6 +670,16 @@
+       sortable[FieldSortTitle] = m_strSortTitle;
+     break;
+   }
++  case FieldOriginalTitle:
++  {
++    // seasons with a custom name/title need special handling as they should be sorted by season number
++    if (m_type == MediaTypeSeason && !m_strOriginalTitle.empty())
++      sortable[FieldOriginalTitle] =
++          StringUtils::Format(g_localizeStrings.Get(20358).c_str(), m_iSeason);
++    else
++      sortable[FieldOriginalTitle] = m_strOriginalTitle;
++    break;
++  }
+   case FieldTvShowStatus:             sortable[FieldTvShowStatus] = m_strStatus; break;
+   case FieldProductionCode:           sortable[FieldProductionCode] = m_strProductionCode; break;
+   case FieldAirDate:                  sortable[FieldAirDate] = m_firstAired.IsValid() ? m_firstAired.GetAsDBDate() : (m_premiered.IsValid() ? m_premiered.GetAsDBDate() : StringUtils::Empty); break;
+--- a/xbmc/FileItem.cpp	Tue Mar 16 14:58:58 2021
++++ b/xbmc/FileItem.cpp	Tue Mar 16 14:58:56 2021
+@@ -2267,6 +2267,7 @@
+ {
+   if (sortDescription.sortBy == SortByFile ||
+       sortDescription.sortBy == SortBySortTitle ||
++      sortDescription.sortBy == SortByOriginalTitle ||
+       sortDescription.sortBy == SortByDateAdded ||
+       sortDescription.sortBy == SortByRating ||
+       sortDescription.sortBy == SortByYear ||
+--- a/xbmc/SortFileItem.h	Tue Mar 16 13:28:28 2021
++++ b/xbmc/SortFileItem.h	Tue Mar 16 12:37:23 2021
+@@ -54,5 +54,7 @@
+   SORT_METHOD_CHANNEL_NUMBER,
+   SORT_METHOD_BITRATE,
+   SORT_METHOD_DATE_TAKEN,
+-  SORT_METHOD_MAX
++  SORT_METHOD_MAX,
++  SORT_METHOD_VIDEO_ORIGINAL_TITLE,
++  SORT_METHOD_VIDEO_ORIGINAL_TITLE_IGNORE_THE
+ } SORT_METHOD;
