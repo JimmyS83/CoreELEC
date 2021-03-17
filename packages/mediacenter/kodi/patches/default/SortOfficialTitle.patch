@@ -207,3 +207,14 @@
 +  SORT_METHOD_VIDEO_ORIGINAL_TITLE,
 +  SORT_METHOD_VIDEO_ORIGINAL_TITLE_IGNORE_THE
  } SORT_METHOD;
+--- a/xbmc/interfaces/json-rpc/schema/types.json	Wed Mar 17 20:32:06 2021
++++ b/xbmc/interfaces/json-rpc/schema/types.json	Wed Mar 17 20:32:52 2021
+@@ -108,7 +108,7 @@
+                   "album", "albumtype", "genre", "country", "year", "rating", "userrating", "votes", "top250", "programcount",
+                   "playlist", "episode", "season", "totalepisodes", "watchedepisodes", "tvshowstatus", "tvshowtitle",
+                   "sorttitle", "productioncode", "mpaa", "studio", "dateadded", "lastplayed", "playcount", "listeners",
+-                  "bitrate", "random" ]
++                  "bitrate", "random", "originaltitle" ]
+       },
+       "order": { "type": "string", "default": "ascending", "enum": [ "ascending", "descending" ] },
+       "ignorearticle": { "type": "boolean", "default": false },
