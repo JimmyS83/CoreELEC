@@ -170,7 +170,7 @@ ${GREETING1}
 ${GREETING2}
 ${GREETING3}
 ${GREETING4}
-${DISTRONAME} (${LIBREELEC_BUILD}): ${LIBREELEC_VERSION} (JimmyS build) (${LIBREELEC_ARCH})
+${DISTRONAME} (${LIBREELEC_BUILD}): ${LIBREELEC_VERSION} (JimmyS build, reverted ffmpeg bump) (${LIBREELEC_ARCH})
 EOF
 
 ln -sf /etc/issue ${INSTALL}/etc/motd
