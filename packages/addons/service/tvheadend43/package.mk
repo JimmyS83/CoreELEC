@@ -112,6 +112,12 @@ post_makeinstall_target() {
 
 addon() {
   mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/{bin,lib}
+  # Only if needed, it was removed for newer TVH43 I dont know why
+  #cp -PL $(get_install_dir gnutls)/.INSTALL_PKG/usr/lib/libgnutls.so.30 $ADDON_BUILD/$PKG_ADDON_ID/lib
+  #cp -PL $(get_install_dir nettle)/.install_pkg/usr/lib/libnettle.so.8 $ADDON_BUILD/$PKG_ADDON_ID/lib
+  #cp -PL $(get_install_dir nettle)/.install_pkg/usr/lib/libhogweed.so.6 $ADDON_BUILD/$PKG_ADDON_ID/lib
+  #cp -PL $(get_install_dir gmp)/.install_pkg/usr/lib/libgmp.so.10 $ADDON_BUILD/$PKG_ADDON_ID/lib
+
 
   cp ${PKG_DIR}/addon.xml ${ADDON_BUILD}/${PKG_ADDON_ID}
 
@@ -130,5 +136,8 @@ addon() {
   # dvb-scan files
   mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}/dvb-scan
   cp -r $(get_install_dir tvh-dtv-scan-tables)/usr/share/dvbv5/* \
+        $(get_install_dir tvh-dtv-scan-tables)/atsc \
+        $(get_install_dir tvh-dtv-scan-tables)/dvb-* \
+        $(get_install_dir tvh-dtv-scan-tables)/isdb-t \
         ${ADDON_BUILD}/${PKG_ADDON_ID}/dvb-scan
 }
