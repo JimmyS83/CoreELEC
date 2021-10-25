@@ -1,5 +1,5 @@
---- a/xbmc/filesystem/PluginDirectory.cpp	Tue Mar 16 13:28:28 2021
-+++ b/xbmc/filesystem/PluginDirectory.cpp	Mon Mar 15 23:15:16 2021
+--- a/xbmc/filesystem/PluginDirectory.cpp	Mon Jan 19 23:26:32 1970
++++ b/xbmc/filesystem/PluginDirectory.cpp	Mon Jan 19 23:26:32 1970
 @@ -348,6 +348,12 @@
          dir->m_listItems->AddSortMethod(SortBySortTitle, 556, LABEL_MASKS("%T", "%M", "%T", "%M"), CServiceBroker::GetSettingsComponent()->GetSettings()->GetBool(CSettings::SETTING_FILELISTS_IGNORETHEWHENSORTING) ? SortAttributeIgnoreArticle : SortAttributeNone);
          break;
@@ -13,8 +13,19 @@
      case SORT_METHOD_MPAA_RATING:
        {
          dir->m_listItems->AddSortMethod(SortByMPAA, 20074, LABEL_MASKS("%T", "%O", "%T", "%O"));
---- a/xbmc/interfaces/legacy/ModuleXbmcplugin.h	Tue Mar 16 13:28:28 2021
-+++ b/xbmc/interfaces/legacy/ModuleXbmcplugin.h	Mon Mar 15 22:17:22 2021
+--- a/xbmc/interfaces/json-rpc/schema/types.json	Mon Jan 19 23:26:32 1970
++++ b/xbmc/interfaces/json-rpc/schema/types.json	Mon Jan 19 23:26:32 1970
+@@ -108,7 +108,7 @@
+                   "album", "albumtype", "genre", "country", "year", "rating", "userrating", "votes", "top250", "programcount",
+                   "playlist", "episode", "season", "totalepisodes", "watchedepisodes", "tvshowstatus", "tvshowtitle",
+                   "sorttitle", "productioncode", "mpaa", "studio", "dateadded", "lastplayed", "playcount", "listeners",
+-                  "bitrate", "random" ]
++                  "bitrate", "random", "originaltitle" ]
+       },
+       "order": { "type": "string", "default": "ascending", "enum": [ "ascending", "descending" ] },
+       "ignorearticle": { "type": "boolean", "default": false },
+--- a/xbmc/interfaces/legacy/ModuleXbmcplugin.h	Mon Jan 19 23:26:32 1970
++++ b/xbmc/interfaces/legacy/ModuleXbmcplugin.h	Mon Jan 19 23:26:32 1970
 @@ -461,6 +461,8 @@
      SWIG_CONSTANT(int, SORT_METHOD_VIDEO_TITLE);
      SWIG_CONSTANT(int, SORT_METHOD_VIDEO_SORT_TITLE);
@@ -24,8 +35,8 @@
      SWIG_CONSTANT(int, SORT_METHOD_PRODUCTIONCODE);
      SWIG_CONSTANT(int, SORT_METHOD_SONG_RATING);
      SWIG_CONSTANT(int, SORT_METHOD_MPAA_RATING);
---- a/xbmc/playlists/SmartPlayList.cpp	Tue Mar 16 13:28:28 2021
-+++ b/xbmc/playlists/SmartPlayList.cpp	Tue Mar 16 11:01:06 2021
+--- a/xbmc/playlists/SmartPlayList.cpp	Mon Jan 19 23:26:32 1970
++++ b/xbmc/playlists/SmartPlayList.cpp	Mon Jan 19 23:26:32 1970
 @@ -525,6 +525,7 @@
    else if (type == "tvshows")
    {
@@ -50,8 +61,8 @@
      orders.push_back(SortByVotes);
      orders.push_back(SortByRating);
      orders.push_back(SortByUserRating);
---- a/xbmc/utils/SortUtils.cpp	Tue Mar 16 13:28:28 2021
-+++ b/xbmc/utils/SortUtils.cpp	Tue Mar 16 12:36:28 2021
+--- a/xbmc/utils/SortUtils.cpp	Mon Jan 19 23:26:32 1970
++++ b/xbmc/utils/SortUtils.cpp	Mon Jan 19 23:26:32 1970
 @@ -244,6 +244,22 @@
    return title;
  }
@@ -110,8 +121,8 @@
  };
  
  SortBy SortUtils::SortMethodFromString(const std::string& sortMethod)
---- a/xbmc/utils/SortUtils.h	Tue Mar 16 13:28:28 2021
-+++ b/xbmc/utils/SortUtils.h	Mon Mar 15 22:07:42 2021
+--- a/xbmc/utils/SortUtils.h	Mon Jan 19 23:26:32 1970
++++ b/xbmc/utils/SortUtils.h	Mon Jan 19 23:26:32 1970
 @@ -153,6 +153,8 @@
    SortByLastUpdated,
    /// __52__ : Sort by last used                  <em>(String: <b><c>lastused</c></b>)</em>
@@ -121,8 +132,8 @@
  } SortBy;
  ///@}
  
---- a/xbmc/video/GUIViewStateVideo.cpp	Tue Mar 16 13:28:28 2021
-+++ b/xbmc/video/GUIViewStateVideo.cpp	Tue Mar 16 12:35:57 2021
+--- a/xbmc/video/GUIViewStateVideo.cpp	Mon Jan 19 23:26:32 1970
++++ b/xbmc/video/GUIViewStateVideo.cpp	Mon Jan 19 23:26:32 1970
 @@ -126,6 +126,7 @@
      case NODE_TYPE_INPROGRESS_TVSHOWS:
        {
@@ -155,20 +166,18 @@
      CServiceBroker::GetSettingsComponent()->GetSettings()->GetBool(CSettings::SETTING_FILELISTS_IGNORETHEWHENSORTING) ? SortAttributeIgnoreArticle : SortAttributeNone);
    AddSortMethod(SortByYear, 562, LABEL_MASKS("%T", "%Y", "%T", "%Y"));  // Title, Year | Title, Year
    AddSortMethod(SortByRating, 563, LABEL_MASKS("%T", "%R", "%T", "%R"));  // Title, Rating | Title, Rating
---- a/xbmc/video/VideoDatabase.cpp	Tue Mar 16 13:28:28 2021
-+++ b/xbmc/video/VideoDatabase.cpp	Tue Mar 16 12:33:36 2021
-@@ -6961,7 +6961,8 @@
-       sortDescription.sortBy == SortByUserRating ||
-       sortDescription.sortBy == SortByYear ||
-       sortDescription.sortBy == SortByLastPlayed ||
--      sortDescription.sortBy == SortByPlaycount)
-+      sortDescription.sortBy == SortByPlaycount ||
-+      sortDescription.sortBy == SortByOriginalTitle)
-     sorting.sortAttributes = (SortAttribute)(sortDescription.sortAttributes | SortAttributeIgnoreFolders);
- 
-   bool success = false;
---- a/xbmc/video/VideoInfoTag.cpp	Tue Mar 16 13:28:28 2021
-+++ b/xbmc/video/VideoInfoTag.cpp	Tue Mar 16 12:06:25 2021
+--- a/xbmc/video/VideoDatabase.cpp	Mon Jan 19 23:26:32 1970
++++ b/xbmc/video/VideoDatabase.cpp	Mon Jan 19 23:26:32 1970
+@@ -6955,6 +6955,7 @@
+   if (sortDescription.sortBy == SortByFile ||
+       sortDescription.sortBy == SortByTitle ||
+       sortDescription.sortBy == SortBySortTitle ||
++      sortDescription.sortBy == SortByOriginalTitle ||
+       sortDescription.sortBy == SortByLabel ||
+       sortDescription.sortBy == SortByDateAdded ||
+       sortDescription.sortBy == SortByRating ||
+--- a/xbmc/video/VideoInfoTag.cpp	Mon Jan 19 23:26:32 1970
++++ b/xbmc/video/VideoInfoTag.cpp	Mon Jan 19 23:26:32 1970
 @@ -670,6 +670,16 @@
        sortable[FieldSortTitle] = m_strSortTitle;
      break;
@@ -186,8 +195,8 @@
    case FieldTvShowStatus:             sortable[FieldTvShowStatus] = m_strStatus; break;
    case FieldProductionCode:           sortable[FieldProductionCode] = m_strProductionCode; break;
    case FieldAirDate:                  sortable[FieldAirDate] = m_firstAired.IsValid() ? m_firstAired.GetAsDBDate() : (m_premiered.IsValid() ? m_premiered.GetAsDBDate() : StringUtils::Empty); break;
---- a/xbmc/FileItem.cpp	Tue Mar 16 14:58:58 2021
-+++ b/xbmc/FileItem.cpp	Tue Mar 16 14:58:56 2021
+--- a/xbmc/FileItem.cpp	Mon Jan 19 23:26:32 1970
++++ b/xbmc/FileItem.cpp	Mon Jan 19 23:26:32 1970
 @@ -2267,6 +2267,7 @@
  {
    if (sortDescription.sortBy == SortByFile ||
@@ -196,25 +205,13 @@
        sortDescription.sortBy == SortByDateAdded ||
        sortDescription.sortBy == SortByRating ||
        sortDescription.sortBy == SortByYear ||
---- a/xbmc/SortFileItem.h	Tue Mar 16 13:28:28 2021
-+++ b/xbmc/SortFileItem.h	Tue Mar 16 12:37:23 2021
+--- a/xbmc/SortFileItem.h	Mon Jan 19 23:26:32 1970
++++ b/xbmc/SortFileItem.h	Mon Jan 19 23:26:32 1970
 @@ -54,5 +54,7 @@
    SORT_METHOD_CHANNEL_NUMBER,
    SORT_METHOD_BITRATE,
    SORT_METHOD_DATE_TAKEN,
--  SORT_METHOD_MAX
-+  SORT_METHOD_MAX,
 +  SORT_METHOD_VIDEO_ORIGINAL_TITLE,
-+  SORT_METHOD_VIDEO_ORIGINAL_TITLE_IGNORE_THE
++  SORT_METHOD_VIDEO_ORIGINAL_TITLE_IGNORE_THE,
+   SORT_METHOD_MAX
  } SORT_METHOD;
---- a/xbmc/interfaces/json-rpc/schema/types.json	Wed Mar 17 20:32:06 2021
-+++ b/xbmc/interfaces/json-rpc/schema/types.json	Wed Mar 17 20:32:52 2021
-@@ -108,7 +108,7 @@
-                   "album", "albumtype", "genre", "country", "year", "rating", "userrating", "votes", "top250", "programcount",
-                   "playlist", "episode", "season", "totalepisodes", "watchedepisodes", "tvshowstatus", "tvshowtitle",
-                   "sorttitle", "productioncode", "mpaa", "studio", "dateadded", "lastplayed", "playcount", "listeners",
--                  "bitrate", "random" ]
-+                  "bitrate", "random", "originaltitle" ]
-       },
-       "order": { "type": "string", "default": "ascending", "enum": [ "ascending", "descending" ] },
-       "ignorearticle": { "type": "boolean", "default": false },
