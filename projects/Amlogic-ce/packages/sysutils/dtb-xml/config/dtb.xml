@@ -138,7 +138,7 @@
     </spicc1_off>
   </spicc1>
 
-  <dvb status="off" version="0">
+  <dvb status="off" version="2">
     <dvb_on name="on">
       <cmd path="/dvb status" type="s" >
         <value>okay</value>
@@ -239,7 +239,7 @@
       </cmd>
     </int_phy>
   </int_ext_phy>
-  
+
   <k_usb3_pcie status="USB3" dt_id="khadas_vim3*" version="0">
     <k_usb3 name="USB3">
       <cmd path="/usb3phy@ffe09080 status" type="s" >
