@@ -40,7 +40,10 @@ PKG_CMAKE_OPTS_TARGET="-DENABLE_DAEMON=ON \
 
 addon() {
   mkdir -p ${ADDON_BUILD}/${PKG_ADDON_ID}
-    cp -PR ${PKG_INSTALL}/usr/bin \
-           ${PKG_INSTALL}/usr/share/transmission/web \
-           ${ADDON_BUILD}/${PKG_ADDON_ID}
+#  18.x branch
+#  cp -PR ${PKG_BUILD}/.install_pkg/usr/bin \
+#  ${PKG_BUILD}/.install_pkg/usr/share/transmission/web \ 
+   cp -PR ${PKG_INSTALL}/usr/bin \
+   ${PKG_INSTALL}/usr/share/transmission/web \
+   ${ADDON_BUILD}/${PKG_ADDON_ID}
 }
