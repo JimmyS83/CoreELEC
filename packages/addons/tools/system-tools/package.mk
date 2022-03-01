@@ -3,7 +3,7 @@
 
 PKG_NAME="system-tools"
 PKG_VERSION="1.0"
-PKG_REV="111"
+PKG_REV="112"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://libreelec.tv"
@@ -11,7 +11,7 @@ PKG_URL=""
 PKG_DEPENDS_TARGET="toolchain"
 PKG_SECTION="virtual"
 PKG_SHORTDESC="A bundle of system tools and programs"
-PKG_LONGDESC="This bundle currently includes autossh, diffutils, dstat, dtach, efibootmgr, encfs, evtest, fdupes, file, getscancodes, hddtemp, hd-idle, hid_mapper, htop, i2c-tools, inotify-tools, jq, lm_sensors, lshw, mc, mrxvt, mtpfs, nmon, p7zip, patch, pv, screen, smartmontools, strace, stress-ng, unrar, usb-modeswitch and vim."
+PKG_LONGDESC="This bundle currently includes autossh, diffutils, dstat, dtach, efibootmgr, encfs, evtest, fdupes, file, getscancodes, hddtemp, hd-idle, hid_mapper, htop, i2c-tools, inotify-tools, jq, lm_sensors, lshw, mc, mrxvt, mtpfs, nmon, p7zip, patch, pv, screen, smartmontools, strace, stress-ng, unrar, usb-modeswitch, mmc-utils and vim."
 
 PKG_IS_ADDON="yes"
 PKG_ADDON_NAME="System Tools"
@@ -37,6 +37,7 @@ PKG_DEPENDS_TARGET="toolchain \
                     lm_sensors \
                     lshw \
                     mc \
+                    mmc-utils \
                     mtpfs \
                     nmon \
                     p7zip \
@@ -134,7 +135,10 @@ addon() {
     # mrxvt
     cp -P $(get_build_dir mrxvt)/.$TARGET_NAME/src/mrxvt $ADDON_BUILD/$PKG_ADDON_ID/bin 2>/dev/null || :
 
-    # mtpfs
+    # mmc-utils
+    cp -P $(get_build_dir mmc-utils)/.install_pkg/usr/local/bin/mmc $ADDON_BUILD/$PKG_ADDON_ID/bin
+	
+	# mtpfs
     cp -P $(get_build_dir mtpfs)/.$TARGET_NAME/mtpfs $ADDON_BUILD/$PKG_ADDON_ID/bin/
 
     # nmon

@@ -1,3 +1,6 @@
+112
+- Add mmc-utils
+
 111
 - updated autossh to 1.4g
 - updated file to d1ff3af
