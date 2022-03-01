@@ -3,7 +3,7 @@
 
 PKG_NAME="system-tools"
 PKG_VERSION="1.0"
-PKG_REV="126"
+PKG_REV="128"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://libreelec.tv"
@@ -38,6 +38,7 @@ PKG_DEPENDS_TARGET="toolchain \
                     lm_sensors \
                     lshw \
                     mc \
+                    mmc-utils \
                     mtpfs \
                     nmon \
                     p7zip \
@@ -128,7 +129,10 @@ addon() {
     cp -Pa $(get_install_dir mc)/usr/bin/* ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/
     cp -Pa $(get_install_dir mc)/storage/.kodi/addons/virtual.system-tools/* ${ADDON_BUILD}/${PKG_ADDON_ID}
 
-    # mtpfs
+    # mmc-utils
+    cp -P $(get_install_dir mmc-utils)/usr/local/bin/mmc ${ADDON_BUILD}/${PKG_ADDON_ID}/bin
+	
+	# mtpfs
     cp -P $(get_install_dir mtpfs)/usr/bin/mtpfs ${ADDON_BUILD}/${PKG_ADDON_ID}/bin/
 
     # nmon
