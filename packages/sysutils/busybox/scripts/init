@@ -480,6 +480,10 @@ load_splash() {
           if [ -f "${s}" ]; then
             SPLASHIMAGE="${s}"
             break
+          elif [ "$FORCE_SPLASH" = "no" -a -f "${s}config" ]; then
+            SPLASHIMAGE="${s}"
+            break
+          fi
         done
       fi
 
