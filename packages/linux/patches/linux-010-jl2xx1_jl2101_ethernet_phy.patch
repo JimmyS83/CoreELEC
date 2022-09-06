@@ -1,0 +1,48 @@
+diff -urN a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
+--- a/drivers/net/ethernet/stmicro/stmmac/Kconfig	2020-10-19 16:12:59.000000000 +0200
++++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig	2022-09-06 17:27:35.000000000 +0200
+@@ -29,6 +29,16 @@
+ 
+ if STMMAC_PLATFORM
+ 
++config STMMAC_JL2XX1
++	bool "Allow STMMAC delay for JL2XX1/JL2101 Gigabit Ethernet PHY"
++	default n
++	depends on STMMAC_PLATFORM
++	---help---
++	  This allows the STMMAC driver to be delayed for 1.5 seconds
++	  if the PHY JL2XX1/JL2101 is found so they can be properly
++	  initialized. This is only applied to the specific PHY IDs
++	  so other PHY won't be affected.
++
+ config DWMAC_GENERIC
+ 	tristate "Generic driver for DWMAC"
+ 	default STMMAC_PLATFORM
+diff -urN a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c	2020-10-19 16:12:59.000000000 +0200
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c	2022-09-06 17:29:45.000000000 +0200
+@@ -138,6 +138,12 @@
+ #define TX_MONITOR
+ #endif
+ 
++/* PHY ID for JL2XX1 and JL2101, these are used for special initialization modifications for them */
++#ifdef CONFIG_STMMAC_JL2XX1
++#define JL2XX1_PHY_ID	0x937c4030
++#define JL2101_PHY_ID	0x937c4032
++#endif
++
+ #ifdef TX_MONITOR
+ static struct workqueue_struct *moniter_tx_wq;
+ static struct delayed_work moniter_tx_worker;
+@@ -1659,6 +1665,11 @@
+ 
+ 	if (priv->extend_desc && (priv->mode == STMMAC_RING_MODE))
+ 		atds = 1;
++	
++	#ifdef CONFIG_STMMAC_JL2XX1
++		if (priv->phydev->phy_id == JL2XX1_PHY_ID || priv->phydev->phy_id == JL2101_PHY_ID)
++			msleep(1500);
++	#endif
+ 
+ 	ret = priv->hw->dma->reset(priv->ioaddr);
+ 	if (ret) {
