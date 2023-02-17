@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.vecx"
-PKG_VERSION="1.2.0.21-Matrix"
-PKG_SHA256="21f3e3b237afabe50d2e7b2c0487b7edb3566884e73c51852879ccb4785948b0"
+PKG_VERSION="1.2.0.29-Matrix"
+PKG_SHA256="2502a3a8ac7dfa11e11db7a5e5bc02e3bc7df09b05908da26dc4d97064646a71"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"

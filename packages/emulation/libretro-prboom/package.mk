@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="libretro-prboom"
-PKG_VERSION="1e4e73e8589aae7e28ef0aa9eb91d91c1d3308b3"
-PKG_SHA256="0f92abd9a90a346d89513b9d1ec5a92aeec5146004f8d3646bdbed2d2e3d362e"
+PKG_VERSION="1de4411265c717d787b1d512b7f1529314c9c281"
+PKG_SHA256="00b2cbaa2ce9ead2d0d23fbf4be7961a60091fd7297ff22e91b60787ac38cd9f"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/libretro/libretro-prboom"
 PKG_URL="https://github.com/libretro/libretro-prboom/archive/${PKG_VERSION}.tar.gz"

@@ -2,8 +2,8 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="game.libretro.vba-next"
-PKG_VERSION="1.0.2.19-Matrix"
-PKG_SHA256="a18d4bbd17f8c46cae235136090be9015619dc906950e404dcd80ae4f257d564"
+PKG_VERSION="1.0.2.24-Matrix"
+PKG_SHA256="d4a17202353285f4462a0a41736f688411223c1e78d092e967f1297254b0e179"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
