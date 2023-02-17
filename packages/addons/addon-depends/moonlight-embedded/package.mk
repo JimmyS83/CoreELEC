@@ -2,8 +2,8 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="moonlight-embedded"
-PKG_VERSION="97598d9354edf6186ee1bfc9e8d18a6f90984208"
-PKG_SHA256="014c0986258e2eba648be51d55310e7dd3801ce9498395cf671148097993240b"
+PKG_VERSION="395f474cb87f1b05251e2fce098b502952af3ba9"
+PKG_SHA256="8d749d07144fe22febe292abc8a06b93509cfac389fbeb219f18f7925a354c1e"
 PKG_ARCH="any"
 PKG_LICENSE="GPLv3"
 PKG_SITE="https://github.com/TheChoconut/moonlight-embedded"
@@ -13,7 +13,7 @@ PKG_DEPENDS_TARGET="toolchain curl pulseaudio systemd alsa-lib moonlight-common-
 PKG_SECTION=""
 PKG_SHORTDESC="Open source NVIDIA GameStream Linux client"
 PKG_LONGDESC="Moonlight Embedded is an open source implementation of NVIDIA's GameStream, as used by the NVIDIA Shield, but built for Linux."
-PKG_CMAKE_OPTS_TARGET="-DDISABLE_SOFTWARE=ON -DDISABLE_CEC=ON"
+PKG_CMAKE_OPTS_TARGET="-DENABLE_FFMPEG=OFF -DENABLE_CEC=OFF -DENABLE_SDL=OFF"
 
 pre_build_target() {
   cp -a $(get_build_dir moonlight-common-c)/* ${PKG_BUILD}/third_party/moonlight-common-c

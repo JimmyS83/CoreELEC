@@ -17,13 +17,11 @@ PKG_PATCH_DIRS="$LINUX"
 
 case "$LINUX" in
   amlogic-4.9)
-    PKG_VERSION="786bc061aa7ee8378d15d38dd51dbdd6e2308dc1"
-    PKG_SHA256="d1ad14325ed6b58af47b05242ff4b1b31dd86a58a27889b5a0523515e932ac0c"
+    PKG_VERSION="e08147ebea86531618114d87d91200932b7ec41c"
+    PKG_SHA256="c93f157159ed53c3edf73ef6c35fde7b60b72036166712a6e284642b22dbd962"
     PKG_URL="https://github.com/CoreELEC/linux-amlogic/archive/$PKG_VERSION.tar.gz"
     PKG_SOURCE_NAME="linux-$LINUX-$PKG_VERSION.tar.gz"
     PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET aml-dtbtools:host"
-    PKG_DEPENDS_UNPACK="media_modules-aml"
-    PKG_NEED_UNPACK="$PKG_NEED_UNPACK $(get_pkg_directory media_modules-aml)"
     PKG_BUILD_PERF="no"
     PKG_GIT_BRANCH="amlogic-4.9-19"
     ;;
@@ -32,8 +30,8 @@ esac
 PKG_KERNEL_CFG_FILE=$(kernel_config_path) || die
 
 if [ -n "$KERNEL_TOOLCHAIN" ]; then
-  PKG_DEPENDS_HOST="$PKG_DEPENDS_HOST gcc-arm-$KERNEL_TOOLCHAIN:host"
-  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET gcc-arm-$KERNEL_TOOLCHAIN:host"
+  PKG_DEPENDS_HOST="$PKG_DEPENDS_HOST gcc-$KERNEL_TOOLCHAIN:host"
+  PKG_DEPENDS_TARGET="$PKG_DEPENDS_TARGET gcc-$KERNEL_TOOLCHAIN:host"
   HEADERS_ARCH=$TARGET_ARCH
 fi
 
@@ -155,9 +153,6 @@ pre_make_target() {
   fi
 
   kernel_make oldconfig
-
-  # copy video firmware (kernel won't compile without it)
-  [ "$LINUX" = "amlogic-4.9" ] && cp -PR $(get_build_dir media_modules-aml)/firmware $PKG_BUILD/firmware/video || :
 }
 
 make_target() {
@@ -228,11 +223,7 @@ make_target() {
         mv $DTB_PATH/$file $DTB_PATH/dtbtool_input
       done
 
-      case $multidtb in
-        *odroid_n2*) compress="" ;;
-        *) compress="-c" ;;
-      esac
-      dtbTool $compress -o $DTB_PATH/$multidtb $DTB_PATH/dtbtool_input
+      dtbTool -c -o $DTB_PATH/$multidtb $DTB_PATH/dtbtool_input
       rm -fr "$DTB_PATH/dtbtool_input"
       cnt_m=$((cnt_m+1))
     done

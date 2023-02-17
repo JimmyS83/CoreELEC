@@ -3,9 +3,9 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="pvr.wmc"
-PKG_VERSION="20.1.0-Nexus"
-PKG_SHA256="93c8347dd05ce4d5ea815df74a8fa6da48b3367d9dd6bf4961ab3b3ebd5d2e61"
-PKG_REV="1"
+PKG_VERSION="20.3.0-Nexus"
+PKG_SHA256="f045d871789ef3d36e1a7c7361ea35be4e14a395e75446519e937be70d2433b4"
+PKG_REV="3"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-pvr/pvr.wmc"
