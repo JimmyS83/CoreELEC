@@ -4,9 +4,9 @@
 		<import addon="xbmc.addon" version="15.0.0"/>
 	</requires>
 	<extension point="xbmc.addon.repository" name="JimmyS84 repository">
-		<info compressed="false">https://raw.githubusercontent.com/JimmyS83/repository.JimmyS84/master/_repo/v19/addons.xml</info>
-		<checksum>https://raw.githubusercontent.com/JimmyS83/repository.JimmyS84/master/_repo/v19/addons.xml.md5</checksum>
-		<datadir zip="true">https://raw.githubusercontent.com/JimmyS83/repository.JimmyS84/master/_repo/v19/</datadir>
+		<info compressed="false">https://raw.githubusercontent.com/JimmyS83/repository.JimmyS84/master/_repo/v20/addons.xml</info>
+		<checksum>https://raw.githubusercontent.com/JimmyS83/repository.JimmyS84/master/_repo/v20/addons.xml.md5</checksum>
+		<datadir zip="true">https://raw.githubusercontent.com/JimmyS83/repository.JimmyS84/master/_repo/v20/</datadir>
 		<hashes>false</hashes>
 	</extension>
 	<extension point="xbmc.addon.metadata">
