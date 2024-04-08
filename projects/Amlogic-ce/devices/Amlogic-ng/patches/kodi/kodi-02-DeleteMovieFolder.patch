@@ -1,0 +1,14 @@
+--- a/xbmc/video/dialogs/GUIDialogVideoInfo.cpp	2023-02-17 17:38:42.833910000 +0100
++++ b/xbmc/video/dialogs/GUIDialogVideoInfo.cpp	2023-02-17 17:43:43.657116100 +0100
+@@ -1452,6 +1452,11 @@
+     }
+     if (URIUtils::HasSlashAtEnd(strDeletePath))
+       item->m_bIsFolder = true;
++    else
++    {
++      strDeletePath = item->GetVideoInfoTag()->m_basePath;
++      item->m_bIsFolder = true;
++    }
+ 
+     // check if the file/directory can be deleted
+     if (CUtil::SupportsWriteFileOperations(strDeletePath))
