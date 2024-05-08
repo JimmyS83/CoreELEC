@@ -409,7 +409,6 @@ post_makeinstall_target() {
   mkdir -p ${INSTALL}/usr/share/kodi/addons
     cp -R ${PKG_DIR}/config/repository.coreelec ${INSTALL}/usr/share/kodi/addons/${ADDON_REPO_ID}
     cp -R ${PKG_DIR}/config/repository.JimmyS84v21 ${INSTALL}/usr/share/kodi/addons
-    cp -R ${PKG_DIR}/config/repository.JimmyS84v20 ${INSTALL}/usr/share/kodi/addons
     cp -R ${PKG_DIR}/config/repository.JimmyS84v19 ${INSTALL}/usr/share/kodi/addons
     cp -R ${PKG_DIR}/config/repository.JimmyS84privatev19 ${INSTALL}/usr/share/kodi/addons
 
