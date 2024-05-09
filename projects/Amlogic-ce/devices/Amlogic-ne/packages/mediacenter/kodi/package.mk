@@ -463,6 +463,10 @@ post_makeinstall_target() {
       cp ${PKG_DIR}/fonts/*.ttf ${INSTALL}/usr/share/kodi/media/Fonts
   fi
 
+  # Allow more fonts for Subtitles
+  mkdir -p ${INSTALL}/storage/.kodi/media/Fonts
+  cp ${PKG_DIR}/fonts/*.ttf ${INSTALL}/storage/.kodi/media/Fonts
+
   # Compile kodi Python site-packages to .pyc bytecode, and remove .py source code
   python_compile ${INSTALL}/usr/lib/${PKG_PYTHON_VERSION}/site-packages/kodi
 
