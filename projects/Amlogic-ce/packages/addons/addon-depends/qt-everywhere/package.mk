@@ -2,12 +2,12 @@
 # Copyright (C) 2018-present Team CoreELEC (https://coreelec.org)
 
 PKG_NAME="qt-everywhere"
-PKG_VERSION="5.13.0"
-PKG_SHA256="2cba31e410e169bd5cdae159f839640e672532a4687ea0f265f686421e0e86d6"
+PKG_VERSION="5.15.13"
+PKG_SHA256="9550ec8fc758d3d8d9090e261329700ddcd712e2dda97e5fcfeabfac22bea2ca"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="http://qt-project.org"
-PKG_URL="http://download.qt.io/archive/qt/${PKG_VERSION::-2}/${PKG_VERSION}/single/${PKG_NAME}-src-${PKG_VERSION}.tar.xz"
+PKG_URL="http://download.qt.io/archive/qt/${PKG_VERSION%.*}/${PKG_VERSION}/single/${PKG_NAME}-opensource-src-${PKG_VERSION}.tar.xz"
 PKG_DEPENDS_TARGET="pcre2 zlib openssl libjpeg-turbo"
 PKG_SOURCE_DIR="${PKG_NAME}-src-${PKG_VERSION}"
 PKG_LONGDESC="A cross-platform application and UI framework"
@@ -23,7 +23,7 @@ PKG_CONFIGURE_OPTS_TARGET="-prefix /usr
                            -force-pkg-config
                            -openssl-linked
                            -no-accessibility
-                           -qt-sqlite
+                           -system-sqlite
                            -no-sql-mysql
                            -system-zlib
                            -no-mtdev
@@ -73,6 +73,15 @@ PKG_CONFIGURE_OPTS_TARGET="-prefix /usr
                            -skip qtwinextras
                            -skip qtx11extras
                            -skip qtxmlpatterns"
+
+post_unpack() {
+  # HOST_CFLAGS_DBUS is set to SYSROOT_PREFIX/usr/include
+  # from libsystemd.pc which is required by dbus-1.pc
+  # this fails to build some host tools
+  # with -no-dbus this workaround is not needed
+  sed -i "s|QT_HOST_CFLAGS_DBUS|QT_HOST_CFLAGS_DBUS_IGNORED|" \
+    ${PKG_BUILD}/qtbase/configure.json
+}
 
 configure_target() {
   QMAKE_CONF_DIR="qtbase/mkspecs/devices/linux-libreelec-g++"

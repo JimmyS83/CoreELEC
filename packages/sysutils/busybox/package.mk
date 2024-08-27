@@ -157,6 +157,8 @@ makeinstall_target() {
 
   # remove bash symbolic link because we use real bash
   rm ${INSTALL}/usr/bin/bash
+  # also remove default shell symbolic link which will be set to bash
+  rm ${INSTALL}/usr/bin/sh
 }
 
 post_install() {
@@ -176,6 +178,7 @@ post_install() {
   enable_service vfd-clock.service
   enable_service var.mount
   enable_service locale.service
+  enable_service restore-storage-permissions.service
   listcontains "${FIRMWARE}" "rpi-eeprom" && enable_service rpi-flash-firmware.service
 
   # cron support

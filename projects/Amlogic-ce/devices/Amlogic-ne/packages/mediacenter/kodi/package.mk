@@ -4,8 +4,8 @@
 # Copyright (C) 2022-present Team CoreELEC (https://coreelec.tv)
 
 PKG_NAME="kodi"
-PKG_VERSION="9c9dd0e99dd34d888cb53d732d475b0097767846"
-PKG_SHA256="dac5007497a9ad2737e46084a3665a7de9c953f339d75555266be10f138f9265"
+PKG_VERSION="ee37871f39da407b1011d542b800f62958fd8d57"
+PKG_SHA256="de562f06d0c0d7bb94ccc6509bbdaf0ecfdb835bb2dd73e89f03c8994b2abbb7"
 PKG_LICENSE="GPL"
 PKG_SITE="http://www.kodi.tv"
 PKG_URL="https://github.com/CoreELEC/xbmc/archive/${PKG_VERSION}.tar.gz"
@@ -340,8 +340,10 @@ pre_configure_target() {
 
 post_make_target() {
   for libname in libdvdcss libdvdnav libdvdread; do
-    mkdir -p "${SOURCES}/${libname}"
-    cp "${PKG_BUILD}/.${TARGET_NAME}/build/download/${libname}"* "${SOURCES}/${libname}" || :
+    if [ -f "${PKG_BUILD}/.${TARGET_NAME}/build/download/${libname}"* ]; then
+      mkdir -p "${SOURCES}/${libname}"
+      cp "${PKG_BUILD}/.${TARGET_NAME}/build/download/${libname}"* "${SOURCES}/${libname}"
+    fi
   done
 }
 

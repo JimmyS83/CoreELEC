@@ -3,14 +3,14 @@
 # Copyright (C) 2018-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="pvr.stalker"
-PKG_VERSION="21.0.0-Omega"
-PKG_SHA256="a2cfe5e5acf186e368cd42bf811b217940685695be0e2689a299c80da7d217f4"
+PKG_VERSION="21.1.2-Omega"
+PKG_SHA256="dd461f59d37cd5e4a199ea2547aeef42861d9f7a57b5d92d3253f686164474a6"
 PKG_REV="1"
 PKG_ARCH="any"
 PKG_LICENSE="GPL"
 PKG_SITE="https://github.com/kodi-pvr/pvr.stalker"
 PKG_URL="https://github.com/kodi-pvr/pvr.stalker/archive/${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain kodi-platform jsoncpp tinyxml"
+PKG_DEPENDS_TARGET="toolchain kodi-platform jsoncpp libxml2 tinyxml"
 PKG_SECTION=""
 PKG_SHORTDESC="pvr.stalker"
 PKG_LONGDESC="pvr.stalker"
