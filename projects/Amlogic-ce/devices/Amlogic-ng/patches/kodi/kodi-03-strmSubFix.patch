@@ -1,0 +1,109 @@
+--- a/xbmc/playlists/PlayListM3U.cpp	Tue Jan 21 08:59:27 2025
++++ b/xbmc/playlists/PlayListM3U.cpp	Wed Feb 12 20:57:24 2025
+@@ -143,34 +143,34 @@
+              !StringUtils::StartsWith(strLine, ArtistMarker) &&
+              !StringUtils::StartsWith(strLine, AlbumMarker))
+     {
+-      std::string strFileName = strLine;
++      std::string filePath = strLine;
+ 
+-      if (!strFileName.empty() && strFileName[0] == '#')
++      if (!filePath.empty() && filePath[0] == '#')
+         continue; // assume a comment or something else we don't support
+ 
+       // Skip self - do not load playlist recursively
+       // We compare case-less in case user has input incorrect case of the current playlist
+-      if (StringUtils::EqualsNoCase(URIUtils::GetFileName(strFileName), m_strPlayListName))
++      if (StringUtils::EqualsNoCase(URIUtils::GetFileName(filePath), m_strPlayListName))
+         continue;
+ 
+-      if (strFileName.length() > 0)
++      if (filePath.length() > 0)
+       {
+         if (!utf8)
+-          g_charsetConverter.unknownToUTF8(strFileName);
++          g_charsetConverter.unknownToUTF8(filePath);
+ 
+         // If no info was read from from the extended tag information, use the file name
+         if (strInfo.length() == 0)
+         {
+-          strInfo = URIUtils::GetFileName(strFileName);
++          strInfo = URIUtils::GetFileName(filePath);
+         }
+ 
+         // should substitution occur before or after charset conversion??
+-        strFileName = URIUtils::SubstitutePath(strFileName);
++        filePath = URIUtils::SubstitutePath(filePath);
+ 
+         // Get the full path file name and add it to the the play list
+-        CUtil::GetQualifiedFilename(m_strBasePath, strFileName);
++        CUtil::GetQualifiedFilename(m_strBasePath, filePath);
+         CFileItemPtr newItem(new CFileItem(strInfo));
+-        newItem->SetPath(strFileName);
++        newItem->SetPath(filePath);
+         if (iStartOffset != 0 || iEndOffset != 0)
+         {
+           newItem->SetStartOffset(iStartOffset);
+@@ -187,6 +187,9 @@
+           newItem->GetVideoInfoTag()->Reset(); // Force VideoInfoTag creation
+         if (lDuration && newItem->IsAudio())
+           newItem->GetMusicInfoTag()->SetDuration(lDuration);
++				
++        newItem->SetProperty("original_playlist_filepath", strFileName);
++        
+         for (auto &prop : properties)
+         {
+           newItem->SetProperty(prop.first, prop.second);
+
+
+--- a/xbmc/utils/URIUtils.cpp	Tue Jan 21 08:59:27 2025
++++ b/xbmc/utils/URIUtils.cpp	Wed Feb 12 20:42:25 2025
+@@ -735,6 +735,11 @@
+   return IsProtocol(strPath, "multipath");
+ }
+ 
++bool URIUtils::IsDatabase(const std::string& strFile)
++{
++  return IsVideoDb(strFile) || IsMusicDb(strFile);
++}
++
+ bool URIUtils::IsHD(const std::string& strFileName)
+ {
+   CURL url(strFileName);
+
+
+--- a/xbmc/utils/URIUtils.h	Tue Jan 21 08:59:27 2025
++++ b/xbmc/utils/URIUtils.h	Wed Feb 12 20:55:56 2025
+@@ -155,6 +155,7 @@
+   static bool IsPVRTVRecordingFileOrFolder(const std::string& strFile);
+   static bool IsPVRRadioRecordingFileOrFolder(const std::string& strFile);
+   static bool IsMultiPath(const std::string& strPath);
++  static bool IsDatabase(const std::string& strFile);
+   static bool IsMusicDb(const std::string& strFile);
+   static bool IsNfs(const std::string& strFile);
+   static bool IsOnDVD(const std::string& strFile);
+
+
+--- a/xbmc/video/dialogs/GUIDialogSubtitleSettings.cpp	Tue Jan 21 08:59:27 2025
++++ b/xbmc/video/dialogs/GUIDialogSubtitleSettings.cpp	Wed Feb 12 20:44:41 2025
+@@ -128,8 +128,18 @@
+   }
+ 
+   std::string strPath;
+-  const std::string dynPath{g_application.CurrentFileItem().GetDynPath()};
+-  if (URIUtils::IsInRAR(dynPath) || URIUtils::IsInZIP(dynPath))
++  const CFileItem& fileItem = g_application.CurrentFileItem();
++  const std::string dynPath{fileItem.GetDynPath()};
++  // Playlists can contains media urls that are not browsable (web hosted files)
++  // or urls of non-media files that are to be played by the InputStream add-ons
++  // so when the dynpath is not a sharing protocol (e.g. FTP, SMB)
++  // start browse files from the original playlist file path
++  if (fileItem.HasProperty("original_playlist_filepath") &&
++      !(!URIUtils::IsHTTP(dynPath) && URIUtils::IsNetworkFilesystem(dynPath)))
++  {
++    strPath = fileItem.GetProperty("original_playlist_filepath").asString();
++  }
++  else if (URIUtils::IsInRAR(dynPath) || URIUtils::IsInZIP(dynPath))
+   {
+     strPath = CURL(dynPath).GetHostName();
+   }
