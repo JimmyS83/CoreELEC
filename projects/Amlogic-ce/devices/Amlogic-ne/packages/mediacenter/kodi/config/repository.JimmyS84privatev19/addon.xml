@@ -2,9 +2,9 @@
 <addon id="repository.JimmyS84privatev19" name="JimmyS84 private repository v19" version="1.0.1" provider-name="JimmyS84">
 	<extension point="xbmc.addon.repository" name="JimmyS84 repository v19">
 		<dir>
-			<info compressed="false">https://jirik.php5.cz/storage/repository.JimmySprivate/v19/addons.xml</info>
-			<checksum>https://jirik.php5.cz/storage/repository.JimmySprivate/v19/addons.xml.md5</checksum>
-			<datadir zip="true">https://jirik.php5.cz/storage/repository.JimmySprivate/v19/</datadir>
+			<info compressed="false">https://jiri.alwaysdata.net/storage/repository.JimmySprivate/v19/addons.xml</info>
+			<checksum>https://jiri.alwaysdata.net/storage/repository.JimmySprivate/v19/addons.xml.md5</checksum>
+			<datadir zip="true">https://jiri.alwaysdata.net/storage/repository.JimmySprivate/v19/</datadir>
 			<hashes>false</hashes>
 		</dir>
 	</extension>
