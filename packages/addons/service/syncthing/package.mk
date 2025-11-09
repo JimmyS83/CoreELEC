@@ -2,9 +2,9 @@
 # Copyright (C) 2016-present Team LibreELEC (https://libreelec.tv)
 
 PKG_NAME="syncthing"
-PKG_VERSION="1.27.12"
-PKG_SHA256="5531f0e1bb81b824a2ab62f070e745c142e1328a15229de47b0cb596b5bae417"
-PKG_REV="4"
+PKG_VERSION="2.0.3"
+PKG_SHA256="80ef0589c3949b2b48ae703106e4ce95474a111625923fb7d568f73c2537fe5d"
+PKG_REV="5"
 PKG_ARCH="any"
 PKG_LICENSE="MPLv2"
 PKG_SITE="https://syncthing.net/"
@@ -28,6 +28,12 @@ configure_target() {
 
 make_target() {
   ${GOLANG} build -a -ldflags "${LDFLAGS}" -o bin/syncthing -v ./cmd/syncthing
+}
+
+post_make_target() {
+  # fix wrong permissions which prevents folder to be removed without sudo
+  find ${PKG_BUILD} -type f -perm 0444 -exec chmod 0644 {} +
+  find ${PKG_BUILD} -type d -perm 0555 -exec chmod 0755 {} +
 }
 
 addon() {
